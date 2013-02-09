@@ -35,6 +35,7 @@
 
 #include "ofMain.h"
 #include "ofxTLTrack.h"
+#include "ofxUI.h"
 
 typedef struct {
 	float value;
@@ -45,6 +46,9 @@ class ofxTLButtons : public ofxTLTrack {
   public:
 	ofxTLButtons();
 	virtual ~ofxTLButtons();
+
+	ofxUICanvas* trackGui;
+	void trackGuiEvent(ofxUIEventArgs& e);
 
 	//enable and disable are always automatically called
 	//in setup. Must call superclass's method as well as doing your own

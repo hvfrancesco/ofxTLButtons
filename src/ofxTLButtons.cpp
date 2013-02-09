@@ -34,7 +34,28 @@
 #include "ofxTimeline.h"
 
 ofxTLButtons::ofxTLButtons(){
-
+    //Set up track GUI
+    //trackGui = new ofxUICanvas(0,bounds.getMinY(),ofGetWidth(), 90);
+    trackGui = new ofxUICanvas(0,0,200,200);
+    //ofxUILabelButton* testButton = new ofxUILabelButton("cacca", false,0,0,0,0, OFX_UI_FONT_SMALL);
+    ofxUIButton* testButton1 = new ofxUIButton("cacca", false,20,20,0,0);
+    testButton1->setPadding(0);
+    testButton1->setLabelVisible(false);
+    trackGui->addWidgetRight(testButton1);
+    ofxUITextInput* testInput1 = new ofxUITextInput("cacca_label", "/osc/cacca", 120, 20, 0, 0, OFX_UI_FONT_SMALL);
+    trackGui->addWidgetRight(testInput1);
+    ofxUIButton* testButton2 = new ofxUIButton("culo", false,20,20,0,0);
+    testButton2->setPadding(0);
+    testButton2->setLabelVisible(false);
+    trackGui->addWidgetDown(testButton2);
+    ofxUITextInput* testInput2 = new ofxUITextInput("culo_label", "/osc/culo", 120, 20, 0, 0, OFX_UI_FONT_SMALL);
+    trackGui->addWidgetRight(testInput2);
+    ofxUIButton* testButton3 = new ofxUIButton("merda", false,20,20,0,0);
+    testButton3->setPadding(0);
+    testButton3->setLabelVisible(false);
+    trackGui->addWidgetRight(testButton3);
+    ofxUITextInput* testInput3 = new ofxUITextInput("merda_label", "/osc/merda", 120, 20, 0, 0, OFX_UI_FONT_SMALL);
+    trackGui->addWidgetRight(testInput3);
 }
 
 ofxTLButtons::~ofxTLButtons(){
@@ -46,13 +67,14 @@ ofxTLButtons::~ofxTLButtons(){
 //enabling and disabling
 void ofxTLButtons::enable(){
 	ofxTLTrack::enable();
+	trackGui->enable();
 
 	//other enabling
 }
 
 void ofxTLButtons::disable(){
 	ofxTLTrack::disable();
-
+    trackGui->disable();
 	//other disabling
 }
 
@@ -61,12 +83,16 @@ void ofxTLButtons::disable(){
 //if timeline is set to thread this is called on the back thread so
 //be careful if loading images in herre
 void ofxTLButtons::update(){
-
+    trackGui->getRect()->width = bounds.width;
+    trackGui->getRect()->height = bounds.height;
+    trackGui->getRect()->y = bounds.getMinY();
 }
 
 //draw your track contents. use ofRectangle bounds to know where to draw
 //and the Track functions screenXToMillis() or millisToScreenX() to respect zoom
 void ofxTLButtons::draw(){
+
+    trackGui->draw();
 
 	//this is just a simple example
 	ofPushStyle();
@@ -89,9 +115,11 @@ void ofxTLButtons::draw(){
 
 //caled by the timeline, don't need to register events
 bool ofxTLButtons::mousePressed(ofMouseEventArgs& args, long millis){
+	/*
 	createNewPoint = isActive();
 	clickPoint = ofVec2f(args.x,args.y);
 	return createNewPoint; //signals that the click made a selection
+	*/
 }
 
 void ofxTLButtons::mouseMoved(ofMouseEventArgs& args, long millis){
@@ -102,6 +130,7 @@ void ofxTLButtons::mouseDragged(ofMouseEventArgs& args, long millis){
 }
 void ofxTLButtons::mouseReleased(ofMouseEventArgs& args, long millis){
 
+	/*
 	//need to create clicks on mouse up if the mouse hasn't moved in order to work
 	//well with the click-drag rectangle thing
 	if(createNewPoint && clickPoint.distance(ofVec2f(args.x, args.y)) < 4){
@@ -113,6 +142,7 @@ void ofxTLButtons::mouseReleased(ofMouseEventArgs& args, long millis){
 		//will trigger save and needed for undo
 		timeline->flagTrackModified(this);
 	}
+	*/
 }
 
 //keys pressed events, and nuding from arrow keys with normalized nudge amount 0 - 1.0
