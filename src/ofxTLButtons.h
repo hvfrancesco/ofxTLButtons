@@ -35,6 +35,7 @@
 
 #include "ofMain.h"
 #include "ofxTLTrack.h"
+#include "ofxOsc.h"
 #include "ofxUI.h"
 
 typedef struct {
@@ -44,9 +45,17 @@ typedef struct {
 
 class ofxTLButtons : public ofxTLTrack {
   public:
-	ofxTLButtons();
+    ofxTLButtons();
+	ofxTLButtons(string _oscTarget, int _oscPort);
 	virtual ~ofxTLButtons();
 
+	// OSC stuff
+	string oscTarget;
+	int oscPort;
+	ofxOscSender sender;
+	void sendOscMessage(string _message);
+
+    void setupTrack();
 	ofxUICanvas* trackGui;
 	void trackGuiEvent(ofxUIEventArgs& e);
 

@@ -33,11 +33,44 @@
 #include "ofxTLButtons.h"
 #include "ofxTimeline.h"
 
+
 ofxTLButtons::ofxTLButtons(){
+
+    oscTarget = "localhost";
+    oscPort = 12345;
+    setupTrack();
+
+}
+
+
+ofxTLButtons::ofxTLButtons(string _oscTarget = "localhost", int _oscPort = 12345){
+
+    oscTarget = _oscTarget;
+    oscPort = _oscPort;
+    setupTrack();
+
+}
+
+ofxTLButtons::~ofxTLButtons(){
+
+}
+
+
+void ofxTLButtons::setupTrack(){
+
+    // OSC setup
+    sender.setup(oscTarget, oscPort);
+
+
     //Set up track GUI
     //trackGui = new ofxUICanvas(0,bounds.getMinY(),ofGetWidth(), 90);
     trackGui = new ofxUICanvas(0,0,200,200);
     //ofxUILabelButton* testButton = new ofxUILabelButton("cacca", false,0,0,0,0, OFX_UI_FONT_SMALL);
+    ofxUITextInput* trackOscTarget = new ofxUITextInput("osc target", oscTarget, 120, 20, 0, 0, OFX_UI_FONT_SMALL);
+    trackGui->addWidgetRight(trackOscTarget);
+    ofxUITextInput* trackOscPort = new ofxUITextInput("osc port", ofToString(oscPort), 120, 20, 0, 0, OFX_UI_FONT_SMALL);
+    trackGui->addWidgetDown(trackOscPort);
+
     ofxUIButton* testButton1 = new ofxUIButton("cacca", false,20,20,0,0);
     testButton1->setPadding(0);
     testButton1->setLabelVisible(false);
@@ -56,9 +89,32 @@ ofxTLButtons::ofxTLButtons(){
     trackGui->addWidgetRight(testButton3);
     ofxUITextInput* testInput3 = new ofxUITextInput("merda_label", "/osc/merda", 120, 20, 0, 0, OFX_UI_FONT_SMALL);
     trackGui->addWidgetRight(testInput3);
+    ofAddListener(trackGui->newGUIEvent, this, &ofxTLButtons::trackGuiEvent);
+
+#include "ofxOsc.h"
 }
 
-ofxTLButtons::~ofxTLButtons(){
+
+void ofxTLButtons::trackGuiEvent(ofxUIEventArgs& e){
+
+    if(e.widget->getKind() == OFX_UI_WIDGET_BUTTON){
+        ofxUIButton *button = (ofxUIButton *) e.widget;
+        if(button->getValue() == 0){
+            ofxUITextInput *label = (ofxUITextInput *) trackGui->getWidget(e.widget->getName()+"_label");
+            string labelString = label->getTextString();
+            cout << labelString << endl;
+            sendOscMessage(labelString);
+        }
+    }
+
+}
+
+void ofxTLButtons::sendOscMessage(string _message){
+
+    string message = _message;
+    ofxOscMessage m;
+    m.setAddress(message);
+    sender.sendMessage(m);
 
 }
 
