@@ -182,6 +182,7 @@ void ofxTLButtons::draw(){
     trackGui->draw();
 
 	//this is just a simple example
+	/*
 	ofPushStyle();
 	ofFill();
 	if(isHovering()){
@@ -198,6 +199,7 @@ void ofxTLButtons::draw(){
 			ofCircle(screenX, screenY, 4);
 		}
 	}
+	*/
 }
 
 //caled by the timeline, don't need to register events
