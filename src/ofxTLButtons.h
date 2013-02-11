@@ -46,8 +46,12 @@ typedef struct {
 class ofxTLButtons : public ofxTLTrack {
   public:
     ofxTLButtons();
-	ofxTLButtons(string _oscTarget, int _oscPort);
+	ofxTLButtons(int _rows, int _cols, string _oscTarget, int _oscPort);
 	virtual ~ofxTLButtons();
+
+	//number of buttons
+	int rows;
+	int cols;
 
 	// OSC stuff
 	string oscTarget;

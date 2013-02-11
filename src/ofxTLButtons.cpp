@@ -36,6 +36,8 @@
 
 ofxTLButtons::ofxTLButtons(){
 
+    rows = 3;
+    cols = 4;
     oscTarget = "localhost";
     oscPort = 12345;
     setupTrack();
@@ -43,8 +45,10 @@ ofxTLButtons::ofxTLButtons(){
 }
 
 
-ofxTLButtons::ofxTLButtons(string _oscTarget = "localhost", int _oscPort = 12345){
+ofxTLButtons::ofxTLButtons(int _rows, int _cols, string _oscTarget = "localhost", int _oscPort = 12345){
 
+    rows = _rows;
+    cols = _cols;
     oscTarget = _oscTarget;
     oscPort = _oscPort;
     setupTrack();
@@ -65,33 +69,51 @@ void ofxTLButtons::setupTrack(){
     //Set up track GUI
     //trackGui = new ofxUICanvas(0,bounds.getMinY(),ofGetWidth(), 90);
     trackGui = new ofxUICanvas(0,0,200,200);
+    trackGui->setWidgetSpacing(10.0);
     //ofxUILabelButton* testButton = new ofxUILabelButton("cacca", false,0,0,0,0, OFX_UI_FONT_SMALL);
     ofxUITextInput* trackOscTarget = new ofxUITextInput("osc target", oscTarget, 120, 20, 0, 0, OFX_UI_FONT_SMALL);
     trackGui->addWidgetRight(trackOscTarget);
+    ofxUILabel* trackOscTargetLabel = new ofxUILabel(0,0,"osc out IP",OFX_UI_FONT_SMALL);
+    trackGui->addWidgetRight(trackOscTargetLabel);
     ofxUITextInput* trackOscPort = new ofxUITextInput("osc port", ofToString(oscPort), 120, 20, 0, 0, OFX_UI_FONT_SMALL);
-    trackGui->addWidgetDown(trackOscPort);
+    trackGui->addWidgetSouthOf(trackOscPort, "osc target");
+    ofxUILabel* trackOscPortLabel = new ofxUILabel(0,0,"osc out port",OFX_UI_FONT_SMALL);
+    trackGui->addWidgetRight(trackOscPortLabel);
 
-    ofxUIButton* testButton1 = new ofxUIButton("cacca", false,20,20,0,0);
-    testButton1->setPadding(0);
-    testButton1->setLabelVisible(false);
-    trackGui->addWidgetRight(testButton1);
-    ofxUITextInput* testInput1 = new ofxUITextInput("cacca_label", "/osc/cacca", 120, 20, 0, 0, OFX_UI_FONT_SMALL);
-    trackGui->addWidgetRight(testInput1);
-    ofxUIButton* testButton2 = new ofxUIButton("culo", false,20,20,0,0);
-    testButton2->setPadding(0);
-    testButton2->setLabelVisible(false);
-    trackGui->addWidgetDown(testButton2);
-    ofxUITextInput* testInput2 = new ofxUITextInput("culo_label", "/osc/culo", 120, 20, 0, 0, OFX_UI_FONT_SMALL);
-    trackGui->addWidgetRight(testInput2);
-    ofxUIButton* testButton3 = new ofxUIButton("merda", false,20,20,0,0);
-    testButton3->setPadding(0);
-    testButton3->setLabelVisible(false);
-    trackGui->addWidgetRight(testButton3);
-    ofxUITextInput* testInput3 = new ofxUITextInput("merda_label", "/osc/merda", 120, 20, 0, 0, OFX_UI_FONT_SMALL);
-    trackGui->addWidgetRight(testInput3);
+    // building a matrix of buttons with corresponding editable message
+    for(int i=0; i<rows; i++){
+        for(int j=0; j<cols; j++){
+            int number = (i*cols)+(j+1);
+            string id = ofToString(number);
+            ofxUIButton* Button = new ofxUIButton(id, false,20,20,0,0);
+            Button->setPadding(0);
+            Button->setLabelVisible(false);
+            ofxUITextInput* testInput = new ofxUITextInput(id+"_label", "/osc/"+ofToString(number), 120, 20, 0, 0, OFX_UI_FONT_SMALL);
+            cout << number << endl;
+            if (number == 1){
+                trackGui->addWidgetEastOf(Button, "osc out IP");
+                trackGui->setWidgetSpacing(2.0);
+                trackGui->addWidgetRight(testInput);
+                trackGui->setWidgetSpacing(10.0);
+            }
+            else if (j==0 && number > 1){
+                trackGui->addWidgetSouthOf(Button, ofToString(number-cols));
+                trackGui->setWidgetSpacing(2.0);
+                trackGui->addWidgetRight(testInput);
+                trackGui->setWidgetSpacing(10.0);
+            }
+            else {
+                trackGui->addWidgetRight(Button);
+                trackGui->setWidgetSpacing(2.0);
+                trackGui->addWidgetRight(testInput);
+                trackGui->setWidgetSpacing(10.0);
+            }
+        }
+    }
+
     ofAddListener(trackGui->newGUIEvent, this, &ofxTLButtons::trackGuiEvent);
 
-#include "ofxOsc.h"
+
 }
 
 
@@ -106,6 +128,14 @@ void ofxTLButtons::trackGuiEvent(ofxUIEventArgs& e){
             sendOscMessage(labelString);
         }
     }
+
+    /*
+    else if(e.widget->getName() == "osc target" || e.widget->getName() == "osc port" ) {
+        ofxUITextInput *textinput = (ofxUITextInput *) e.widget;
+        cout << textinput->getTriggerType() << endl;
+    }
+    */
+
 
 }
 
