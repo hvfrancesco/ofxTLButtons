@@ -63,6 +63,8 @@ class ofxTLButtons : public ofxTLTrack {
 	ofxUICanvas* trackGui;
 	void trackGuiEvent(ofxUIEventArgs& e);
 
+	void trackGuiDelete();
+
 	//enable and disable are always automatically called
 	//in setup. Must call superclass's method as well as doing your own
 	//enabling and disabling

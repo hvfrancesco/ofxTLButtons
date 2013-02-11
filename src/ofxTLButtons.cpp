@@ -56,7 +56,7 @@ ofxTLButtons::ofxTLButtons(int _rows, int _cols, string _oscTarget = "localhost"
 }
 
 ofxTLButtons::~ofxTLButtons(){
-
+    delete trackGui;
 }
 
 
@@ -165,11 +165,17 @@ void ofxTLButtons::disable(){
 	//other disabling
 }
 
+void ofxTLButtons::trackGuiDelete(){
+    trackGui->disable();
+    ofRemoveListener(trackGui->newGUIEvent, this, &ofxTLButtons::trackGuiEvent);
+}
+
 //update is called every frame.
 //if your track triggers events it's good to do it here
 //if timeline is set to thread this is called on the back thread so
 //be careful if loading images in herre
 void ofxTLButtons::update(){
+    //trackGui->update();
     trackGui->getRect()->width = bounds.width;
     trackGui->getRect()->height = bounds.height;
     trackGui->getRect()->y = bounds.getMinY();
@@ -180,7 +186,6 @@ void ofxTLButtons::update(){
 void ofxTLButtons::draw(){
 
     trackGui->draw();
-
 	//this is just a simple example
 	/*
 	ofPushStyle();
