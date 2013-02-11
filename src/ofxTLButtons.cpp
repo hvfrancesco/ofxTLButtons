@@ -60,6 +60,7 @@ ofxTLButtons::~ofxTLButtons(){
 }
 
 
+
 void ofxTLButtons::setupTrack(){
 
     // OSC setup
@@ -89,7 +90,6 @@ void ofxTLButtons::setupTrack(){
             Button->setPadding(0);
             Button->setLabelVisible(false);
             ofxUITextInput* testInput = new ofxUITextInput(id+"_label", "/osc/"+ofToString(number), 120, 20, 0, 0, OFX_UI_FONT_SMALL);
-            cout << number << endl;
             if (number == 1){
                 trackGui->addWidgetEastOf(Button, "osc out IP");
                 trackGui->setWidgetSpacing(2.0);
@@ -161,6 +161,7 @@ void ofxTLButtons::enable(){
 void ofxTLButtons::disable(){
 	ofxTLTrack::disable();
     trackGui->disable();
+
 	//other disabling
 }
 
@@ -256,7 +257,7 @@ void ofxTLButtons::selectAll(){
 
 //return a unique name for your track
 string ofxTLButtons::getTrackType(){
-	return "EmptyTrack";
+	return "Buttons";
 }
 
 //for copy+paste you can optionaly implement ways
