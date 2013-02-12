@@ -40,7 +40,8 @@
 
 enum ofxTLButtonsType {
 	OFXTLBUTTONS_TYPE_BUTTONS=0,
-	OFXTLBUTTONS_TYPE_SLIDERS=1
+	OFXTLBUTTONS_TYPE_SLIDERS=1,
+	OFXTLBUTTONS_TYPE_MIXED=2
 };
 
 
@@ -53,6 +54,7 @@ class ofxTLButtons : public ofxTLTrack {
   public:
     ofxTLButtons();
 	ofxTLButtons(int _rows, int _cols, string _oscTarget, int _oscPort, ofxTLButtonsType _type);
+	ofxTLButtons(int _b_rows, int _b_cols, int _s_rows, int _s_cols, string _oscTarget, int _oscPort, ofxTLButtonsType _type);
 	virtual ~ofxTLButtons();
 
 	ofxTLButtonsType type;
@@ -60,6 +62,10 @@ class ofxTLButtons : public ofxTLTrack {
 	//number of buttons
 	int rows;
 	int cols;
+	int button_rows;
+	int button_cols;
+	int slider_rows;
+	int slider_cols;
 
 	// OSC stuff
 	string oscTarget;
