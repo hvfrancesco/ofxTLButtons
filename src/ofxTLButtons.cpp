@@ -40,17 +40,19 @@ ofxTLButtons::ofxTLButtons(){
     cols = 4;
     oscTarget = "localhost";
     oscPort = 12345;
+    type = OFXTLBUTTONS_TYPE_BUTTONS;
     setupTrack();
 
 }
 
 
-ofxTLButtons::ofxTLButtons(int _rows, int _cols, string _oscTarget = "localhost", int _oscPort = 12345){
+ofxTLButtons::ofxTLButtons(int _rows, int _cols, string _oscTarget = "localhost", int _oscPort = 12345, ofxTLButtonsType _type=OFXTLBUTTONS_TYPE_BUTTONS){
 
     rows = _rows;
     cols = _cols;
     oscTarget = _oscTarget;
     oscPort = _oscPort;
+    type = _type;
     setupTrack();
 
 }
@@ -75,38 +77,76 @@ void ofxTLButtons::setupTrack(){
     ofxUITextInput* trackOscTarget = new ofxUITextInput("osc target", oscTarget, 120, 20, 0, 0, OFX_UI_FONT_SMALL);
     trackGui->addWidgetRight(trackOscTarget);
     ofxUILabel* trackOscTargetLabel = new ofxUILabel(0,0,"osc out IP",OFX_UI_FONT_SMALL);
-    trackGui->addWidgetRight(trackOscTargetLabel);
+    trackGui->setWidgetSpacing(5.0);
+    trackGui->addWidgetDown(trackOscTargetLabel);
     ofxUITextInput* trackOscPort = new ofxUITextInput("osc port", ofToString(oscPort), 120, 20, 0, 0, OFX_UI_FONT_SMALL);
-    trackGui->addWidgetSouthOf(trackOscPort, "osc target");
+    trackGui->setWidgetSpacing(10.0);
+    trackGui->addWidgetDown(trackOscPort);
     ofxUILabel* trackOscPortLabel = new ofxUILabel(0,0,"osc out port",OFX_UI_FONT_SMALL);
-    trackGui->addWidgetRight(trackOscPortLabel);
+    trackGui->setWidgetSpacing(5.0);
+    trackGui->addWidgetDown(trackOscPortLabel);
+    trackGui->setWidgetSpacing(10.0);
 
-    // building a matrix of buttons with corresponding editable message
-    for(int i=0; i<rows; i++){
-        for(int j=0; j<cols; j++){
-            int number = (i*cols)+(j+1);
-            string id = ofToString(number);
-            ofxUIButton* Button = new ofxUIButton(id, false,20,20,0,0);
-            Button->setPadding(0);
-            Button->setLabelVisible(false);
-            ofxUITextInput* testInput = new ofxUITextInput(id+"_label", "/osc/"+ofToString(number), 120, 20, 0, 0, OFX_UI_FONT_SMALL);
-            if (number == 1){
-                trackGui->addWidgetEastOf(Button, "osc out IP");
-                trackGui->setWidgetSpacing(2.0);
-                trackGui->addWidgetRight(testInput);
-                trackGui->setWidgetSpacing(10.0);
+    if(type == OFXTLBUTTONS_TYPE_BUTTONS){
+        // building a matrix of buttons with corresponding editable message
+        for(int i=0; i<rows; i++){
+            for(int j=0; j<cols; j++){
+                int number = (i*cols)+(j+1);
+                string id = ofToString(number);
+                ofxUIButton* Button = new ofxUIButton(id, false,20,20,0,0);
+                Button->setPadding(0);
+                Button->setLabelVisible(false);
+                ofxUITextInput* testInput = new ofxUITextInput(id+"_label", "/osc/"+ofToString(number), 120, 20, 0, 0, OFX_UI_FONT_SMALL);
+                if (number == 1){
+                    trackGui->addWidgetEastOf(Button, "osc target");
+                    trackGui->setWidgetSpacing(2.0);
+                    trackGui->addWidgetRight(testInput);
+                    trackGui->setWidgetSpacing(10.0);
+                }
+                else if (j==0 && number > 1){
+                    trackGui->addWidgetSouthOf(Button, ofToString(number-cols));
+                    trackGui->setWidgetSpacing(2.0);
+                    trackGui->addWidgetRight(testInput);
+                    trackGui->setWidgetSpacing(10.0);
+                }
+                else {
+                    trackGui->addWidgetRight(Button);
+                    trackGui->setWidgetSpacing(2.0);
+                    trackGui->addWidgetRight(testInput);
+                    trackGui->setWidgetSpacing(10.0);
+                }
             }
-            else if (j==0 && number > 1){
-                trackGui->addWidgetSouthOf(Button, ofToString(number-cols));
-                trackGui->setWidgetSpacing(2.0);
-                trackGui->addWidgetRight(testInput);
-                trackGui->setWidgetSpacing(10.0);
-            }
-            else {
-                trackGui->addWidgetRight(Button);
-                trackGui->setWidgetSpacing(2.0);
-                trackGui->addWidgetRight(testInput);
-                trackGui->setWidgetSpacing(10.0);
+        }
+    }
+
+    else if(type == OFXTLBUTTONS_TYPE_SLIDERS){
+        // building a matrix of buttons with corresponding editable message
+        for(int i=0; i<rows; i++){
+            for(int j=0; j<cols; j++){
+                int number = (i*cols)+(j+1);
+                string id = ofToString(number);
+                ofxUISlider* Slider = new ofxUISlider(id, 0.0, 1.0, 0.0, 120,15,0,0);
+                Slider->setPadding(0);
+                Slider->setLabelVisible(false);
+                ofxUITextInput* testInput = new ofxUITextInput(id+"_label", "/osc/"+ofToString(number), 120, 20, 0, 0, OFX_UI_FONT_SMALL);
+                if (number == 1){
+                    trackGui->addWidgetEastOf(Slider, "osc target");
+                    trackGui->setWidgetSpacing(0.0);
+                    trackGui->addWidgetSouthOf(testInput, ofToString(number));
+                    trackGui->setWidgetSpacing(10.0);
+                }
+                else if (j==0 && number > 1){
+                    trackGui->addWidgetSouthOf(Slider, ofToString(number-cols)+"_label");
+                    trackGui->setWidgetSpacing(0.0);
+                    trackGui->addWidgetSouthOf(testInput, ofToString(number));
+                    trackGui->setWidgetSpacing(10.0);
+                }
+                else {
+                    trackGui->addWidgetEastOf(Slider, ofToString(number-1));
+                    trackGui->setWidgetSpacing(0.0);
+                    trackGui->addWidgetSouthOf(testInput, ofToString(number));
+                    trackGui->setWidgetSpacing(10.0);
+                }
             }
         }
     }
@@ -119,34 +159,68 @@ void ofxTLButtons::setupTrack(){
 
 void ofxTLButtons::trackGuiEvent(ofxUIEventArgs& e){
 
-    if(e.widget->getKind() == OFX_UI_WIDGET_BUTTON){
-        ofxUIButton *button = (ofxUIButton *) e.widget;
-        if(button->getValue() == 0){
+    if(type == OFXTLBUTTONS_TYPE_BUTTONS){
+        if(e.widget->getKind() == OFX_UI_WIDGET_BUTTON){
+            ofxUIButton *button = (ofxUIButton *) e.widget;
+            if(button->getValue() == 0){
+                ofxUITextInput *label = (ofxUITextInput *) trackGui->getWidget(e.widget->getName()+"_label");
+                string labelString = label->getTextString();
+                cout << labelString << endl;
+                sendOscMessage(labelString);
+            }
+        }
+
+        /*
+        else if(e.widget->getName() == "osc target" || e.widget->getName() == "osc port" ) {
+            ofxUITextInput *textinput = (ofxUITextInput *) e.widget;
+            cout << textinput->getTriggerType() << endl;
+        }
+        */
+    }
+
+    else if(type == OFXTLBUTTONS_TYPE_SLIDERS){
+        if(e.widget->getKind() == OFX_UI_WIDGET_SLIDER_H){
+            ofxUISlider *slider = (ofxUISlider *) e.widget;
             ofxUITextInput *label = (ofxUITextInput *) trackGui->getWidget(e.widget->getName()+"_label");
             string labelString = label->getTextString();
-            cout << labelString << endl;
-            sendOscMessage(labelString);
+            float oscValue = slider->getScaledValue();
+            cout << labelString << " " << "- value:" << oscValue << endl;
+            sendOscMessage(labelString, oscValue);
+
         }
-    }
 
-    /*
-    else if(e.widget->getName() == "osc target" || e.widget->getName() == "osc port" ) {
-        ofxUITextInput *textinput = (ofxUITextInput *) e.widget;
-        cout << textinput->getTriggerType() << endl;
+        /*
+        else if(e.widget->getName() == "osc target" || e.widget->getName() == "osc port" ) {
+            ofxUITextInput *textinput = (ofxUITextInput *) e.widget;
+            cout << textinput->getTriggerType() << endl;
+        }
+        */
     }
-    */
-
 
 }
 
 void ofxTLButtons::sendOscMessage(string _message){
 
-    string message = _message;
-    ofxOscMessage m;
-    m.setAddress(message);
-    sender.sendMessage(m);
-
+    if(type == OFXTLBUTTONS_TYPE_BUTTONS){
+        string message = _message;
+        ofxOscMessage m;
+        m.setAddress(message);
+        sender.sendMessage(m);
+    }
 }
+
+void ofxTLButtons::sendOscMessage(string _message, float _value){
+
+    if(type == OFXTLBUTTONS_TYPE_SLIDERS){
+        string message = _message;
+        float argument = _value;
+        ofxOscMessage m;
+        m.setAddress(message);
+        m.addFloatArg(argument);
+        sender.sendMessage(m);
+    }
+}
+
 
 //enable and disable are always automatically called
 //in setup. Must call superclass's method as well as doing your own

@@ -38,6 +38,12 @@
 #include "ofxOsc.h"
 #include "ofxUI.h"
 
+enum ofxTLButtonsType {
+	OFXTLBUTTONS_TYPE_BUTTONS=0,
+	OFXTLBUTTONS_TYPE_SLIDERS=1
+};
+
+
 typedef struct {
 	float value;
 	unsigned long time;
@@ -46,8 +52,10 @@ typedef struct {
 class ofxTLButtons : public ofxTLTrack {
   public:
     ofxTLButtons();
-	ofxTLButtons(int _rows, int _cols, string _oscTarget, int _oscPort);
+	ofxTLButtons(int _rows, int _cols, string _oscTarget, int _oscPort, ofxTLButtonsType _type);
 	virtual ~ofxTLButtons();
+
+	ofxTLButtonsType type;
 
 	//number of buttons
 	int rows;
@@ -58,6 +66,7 @@ class ofxTLButtons : public ofxTLTrack {
 	int oscPort;
 	ofxOscSender sender;
 	void sendOscMessage(string _message);
+	void sendOscMessage(string _message, float _value);
 
     void setupTrack();
 	ofxUICanvas* trackGui;
